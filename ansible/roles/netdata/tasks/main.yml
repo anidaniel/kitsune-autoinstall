@@ -1,0 +1,17 @@
+---
+- name: Install Netdata dependencies
+  ansible.builtin.apt:
+    name:
+      - zlib1g-dev
+      - uuid-dev
+      - libmnl-dev
+      - gcc
+      - make
+      - git
+    state: present
+
+- name: Install Netdata via kickstart script
+  ansible.builtin.shell: |
+    bash <(curl -Ss https://my-netdata.io/kickstart.sh) --dont-wait
+  args:
+    creates: /usr/sbin/netdata

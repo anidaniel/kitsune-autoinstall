@@ -1,0 +1,24 @@
+---
+- name: Configure static IP and Wi-Fi for wlan0
+  ansible.builtin.copy:
+    dest: /etc/netplan/01-wifi.yaml
+    content: |
+      network:
+        version: 2
+        wifis:
+          wlan0:
+            dhcp4: false
+            addresses: [192.168.1.99/24]
+            gateway4: 192.168.1.1
+            nameservers:
+              addresses: [8.8.8.8,8.8.4.4]
+            access-points:
+              "WIFI_NAME":
+                password: "PASSWORD-123"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Apply netplan
+  ansible.builtin.command:
+    cmd: netplan apply
