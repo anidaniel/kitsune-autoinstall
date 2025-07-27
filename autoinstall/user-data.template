@@ -1,0 +1,62 @@
+#cloud-config
+autoinstall:
+  version: 1
+  identity:
+    hostname: ${HOSTNAME}
+    username: ${USERNAME}
+    password: "$6$rounds=4096$REPLACE_WITH_HASHED_PASSWORD"  # Replace with a secure hash
+  ssh:
+    install-server: true
+    authorized-keys:
+      - ${SSH_PUBLIC_KEY}
+    allow-pw: false
+    disable_root: true
+    port: ${SSH_PORT}
+  network:
+    version: 2
+    wifis:
+      wlan0:
+        dhcp4: false
+        addresses: [${STATIC_IP}]
+        gateway4: ${GATEWAY}
+        nameservers:
+          addresses: [${DNS}]
+        access-points:
+          "${WIFI_NAME}":
+            password: "${WIFI_PASSWORD}"
+  storage:
+    layout:
+      name: lvm
+    swap:
+      size: 4096M
+    config:
+      - type: disk
+        id: disk0
+        match:
+          size: largest
+        ptable: gpt
+        wipe: superblock-recursive
+        preserve: false
+        name: main-disk
+        grub_device: true
+      - type: partition
+        id: partition0
+        device: disk0
+        size: -1
+        flag: boot
+      - type: format
+        id: format0
+        fstype: ext4
+        volume: partition0
+      - type: mount
+        id: mount0
+        path: /
+        device: format0
+  late-commands:
+    - curtin in-target --target=/target -- apt-get update
+    - curtin in-target --target=/target -- apt-get install -y ansible git
+    - curtin in-target --target=/target -- cp -r /cdrom/ansible /target/root/
+    - curtin in-target --target=/target -- cp /cdrom/scripts/setup-postinstall.sh /target/root/
+    - curtin in-target --target=/target -- cp /cdrom/scripts/run-ansible.sh /target/root/
+    - curtin in-target --target=/target -- chmod +x /target/root/setup-postinstall.sh /target/root/run-ansible.sh
+    - curtin in-target --target=/target -- bash /target/root/setup-postinstall.sh

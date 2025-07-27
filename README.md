@@ -35,15 +35,21 @@ This project delivers a fully headless, Wi-Fi-only, zero-touch Ubuntu 24.04 LTS 
 
 ## Quick Start
 
-1. **Customize** `autoinstall/user-data` and `autoinstall/meta-data` as needed (replace `<YOUR_SSH_PUBLIC_KEY>` and password hash).
-2. **Create USB**:
+1. **Edit** `.env` with your Wi-Fi, SSH, and network details. This file is local and git-ignored.
+2. **Customize** `autoinstall/user-data.template` as needed (e.g., password hash).
+3. **Generate** `autoinstall/user-data` from the template:
+   ```bash
+   cd scripts
+   ./generate-user-data.sh
+   ```
+4. **Create USB**:
    ```bash
    genisoimage -output cidata.iso -volid cidata -joliet -rock autoinstall/meta-data autoinstall/user-data
    sudo dd if=cidata.iso of=/dev/sdX bs=4M status=progress
    ```
-3. **Boot** target machine from USB.
-4. **Let the installer run unattended.**
-5. **Ansible will auto-provision on first boot.**
+5. **Boot** target machine from USB.
+6. **Let the installer run unattended.**
+7. **Ansible will auto-provision on first boot.**
 
 ---
 
@@ -81,7 +87,8 @@ kitsune-autoinstall/
 
 ## Security Notes
 - SSH is key-only, custom port, root login disabled.
-- All credentials and keys should be replaced with your own.
+- All credentials and keys are stored in `.env` (never committed to git).
+- Use the provided script to generate `user-data` securely from your local secrets.
 
 ---
 
