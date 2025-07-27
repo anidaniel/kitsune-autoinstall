@@ -15,7 +15,6 @@ This project delivers a fully headless, Wi-Fi-only, zero-touch Ubuntu 24.04 LTS 
   - Wi-Fi setup (`WIFI_NAME`, `PASSWORD-123`)
   - Custom user: `anidaniel`, hostname: `kitsune`
   - Static IP: `192.168.1.99/24`
-  - LUKS full-disk encryption
   - Hardened SSH (port 3624, key-only)
   - Ansible installed in late-commands
 
@@ -82,7 +81,6 @@ kitsune-autoinstall/
 
 ## Security Notes
 - SSH is key-only, custom port, root login disabled.
-- LUKS full-disk encryption is enabled.
 - All credentials and keys should be replaced with your own.
 
 ---
